@@ -1,9 +1,9 @@
 const {
 	data: { useSelect, useDispatch },
 	plugins: { registerPlugin },
-	element: { useState, useEffect },
-	components: { TextControl },
-	editPost: { PluginDocumentSettingPanel },
+	element: { useState, useEffect, Fragment },
+	components: { TextControl, PanelBody },
+	editPost: { PluginSidebar, PluginSidebarMoreMenuItem },
 } = wp;
 
 /**
@@ -30,16 +30,26 @@ const MyDataSettings = () => {
 		});
 	}, [myData]);
 
+	const sidebarName = 'myDataSidebar';
+	const sidebarLabel = 'My Data Config';
+
 	return (
-		<PluginDocumentSettingPanel name="my-data" title="My Data">
-			<TextControl value={myData} onChange={setMyData} />
-		</PluginDocumentSettingPanel>
+		<Fragment>
+			<PluginSidebarMoreMenuItem target={sidebarName}>
+				{ sidebarLabel }
+			</PluginSidebarMoreMenuItem>
+			<PluginSidebar name={sidebarName} title={ sidebarLabel }>
+				<PanelBody>
+					<TextControl value={myData} onChange={setMyData} />
+				</PanelBody>
+			</PluginSidebar>
+		</Fragment>
 	);
 };
 
 if (window.pagenow === 'post') {
 	registerPlugin('mydata', {
 		render: MyDataSettings,
-		icon: null,
+		icon: 'heart',
 	});
 }
