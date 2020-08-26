@@ -1,8 +1,9 @@
 const {
 	data: { useSelect, useDispatch },
+	date: { dateI18n },
 	plugins: { registerPlugin },
 	element: { useState, useEffect },
-	components: { TextControl },
+	components: { DateTimePicker, Popover, Button, PanelRow },
 	editPost: { PluginDocumentSettingPanel },
 } = wp;
 
@@ -19,6 +20,8 @@ const MyDataSettings = () => {
 
 	const { editPost } = useDispatch('core/editor');
 
+	const [openDatePopup, setOpenDatePopup] = useState( false );
+
 	const [myData, setMyData] = useState(_my_data);
 
 	useEffect(() => {
@@ -32,7 +35,24 @@ const MyDataSettings = () => {
 
 	return (
 		<PluginDocumentSettingPanel name="my-data" title="My Data">
-			<TextControl value={myData} onChange={setMyData} />
+			<PanelRow>
+				<span>My Data</span>
+				<div className="components-dropdown">
+					<Button isLink={true} onClick={() => setOpenDatePopup( ! openDatePopup )}>
+						{ myData ? dateI18n( 'F j, Y g:i a', myData ) : "Pick Date & Time" }
+					</Button>
+					{ openDatePopup && (
+						<Popover position="bottom" onClose={ setOpenDatePopup.bind( null, false )}>
+							<DateTimePicker
+								label="My Date/Time Picker"
+								currentDate={myData}
+								onChange={setMyData}
+								is12Hour ={true}
+							/>
+						</Popover>
+					) }
+				</div>
+			</PanelRow>
 		</PluginDocumentSettingPanel>
 	);
 };
